@@ -91,3 +91,34 @@
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
 }
+.clear-expenses-button{
+    margin-left: 530px;
+    padding: 10px 20px;
+    background-color: #f87171;
+    color: #e0e0e0;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+.clear-expenses-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+.total-expenses{
+    font-size: 1.5em;
+    margin-top: 20px;
+    margin-left: 500px;
+    color: #a78bfa;
+    text-shadow: 0 0 10px #8867ed;
+    align-self: flex-start;
+}
+.header3{
+    font-size: 1.5em;
+    margin-top: 20px;
+    color: #a78bfa;
+    text-shadow: 0 0 10px #8867ed;
+    align-self: flex-start;
+    margin-left: 525px;
+}
