@@ -174,9 +174,8 @@ export default function LoginPage() {
                         id="confirmPassword"
                         type="password"
                         placeholder="••••••••"
-                        className={`pl-10 ${
-                          errors.confirmPassword ? "border-destructive focus-visible:ring-destructive" : ""
-                        }`}
+                        className={`pl-10 ${errors.confirmPassword ? "border-destructive focus-visible:ring-destructive" : ""
+                          }`}
                         {...registerField("confirmPassword")}
                       />
                     </div>

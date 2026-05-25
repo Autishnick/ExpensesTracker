@@ -1,10 +1,12 @@
 "use client";
 
+import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useTranslation } from "@/hooks/useTranslation";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,22 +23,6 @@ import { Loader2, ArrowLeft, PlusCircle, CreditCard, User, Tag } from "lucide-re
 import Link from "next/link";
 import { useAddExpenseMutation } from "@/hooks/useExpenses";
 
-// Zod Validation Schema
-const expenseSchema = z.object({
-  member: z
-    .string()
-    .min(2, "Введіть ім'я члена сім'ї (мінімум 2 символи)")
-    .max(30, "Ім'я члена сім'ї занадто довге"),
-  category: z.string().min(1, "Виберіть категорію"),
-  cost: z
-    .number({ message: "Введіть вартість" })
-    .refine((val) => !isNaN(val), "Введіть коректне число")
-    .refine((val) => val > 0, "Вартість повинна бути більшою за 0")
-    .refine((val) => val <= 1000000, "Сума занадто велика"),
-});
-
-type ExpenseFields = z.infer<typeof expenseSchema>;
-
 const categories = [
   "🛒Products",
   "🚌Transport",
@@ -51,6 +37,25 @@ export default function AddExpensePage() {
   const router = useRouter();
   const currentUser = useAuthStore((state) => state.currentUser);
   const isHydrated = useAuthStore((state) => state.isHydrated);
+  const { t } = useTranslation();
+
+  // Dynamic Zod Validation Schema inside the component to react to language changes
+  const expenseSchema = useMemo(() => {
+    return z.object({
+      member: z
+        .string()
+        .min(2, t("addExpense.validation.memberMin"))
+        .max(30, t("addExpense.validation.memberMax")),
+      category: z.string().min(1, t("addExpense.validation.categoryRequired")),
+      cost: z
+        .number({ message: t("addExpense.validation.costRequired") })
+        .refine((val) => !isNaN(val), t("addExpense.validation.costNumber"))
+        .refine((val) => val > 0, t("addExpense.validation.costPositive"))
+        .refine((val) => val <= 1000000, t("addExpense.validation.costLimit")),
+    });
+  }, [t]);
+
+  type ExpenseFields = z.infer<typeof expenseSchema>;
 
   // Form Setup
   const {
@@ -99,16 +104,16 @@ export default function AddExpensePage() {
             className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group cursor-pointer"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            <span>Назад до панелі</span>
+            <span>{t("addExpense.backButton")}</span>
           </Link>
 
           <Card className="border border-border/80 bg-card/60 backdrop-blur-md shadow-xl transition-all duration-300">
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl font-bold tracking-tight text-center">
-                Додати витрату
+                {t("addExpense.title")}
               </CardTitle>
               <CardDescription className="text-center">
-                Заповніть форму, щоб внести витрату до сімейної книги
+                {t("addExpense.subtitle")}
               </CardDescription>
             </CardHeader>
 
@@ -118,12 +123,12 @@ export default function AddExpensePage() {
                 <div className="space-y-2">
                   <Label htmlFor="member" className="flex items-center gap-1.5 font-medium">
                     <User className="h-4 w-4 text-muted-foreground" />
-                    Член сім'ї
+                    {t("addExpense.labelMember")}
                   </Label>
                   <Input
                     id="member"
                     type="text"
-                    placeholder="Хто купував (напр. Мама, Тато, Влад)"
+                    placeholder={t("addExpense.placeholderMember")}
                     className={`${errors.member ? "border-destructive focus-visible:ring-destructive" : ""}`}
                     {...register("member")}
                   />
@@ -136,7 +141,7 @@ export default function AddExpensePage() {
                 <div className="space-y-2">
                   <Label htmlFor="category" className="flex items-center gap-1.5 font-medium">
                     <Tag className="h-4 w-4 text-muted-foreground" />
-                    Категорія
+                    {t("addExpense.labelCategory")}
                   </Label>
                   <Controller
                     name="category"
@@ -148,12 +153,12 @@ export default function AddExpensePage() {
                             errors.category ? "border-destructive focus-visible:ring-destructive" : ""
                           }`}
                         >
-                          <SelectValue placeholder="Виберіть категорію витрати" />
+                          <SelectValue placeholder={t("addExpense.placeholderCategory")} />
                         </SelectTrigger>
                         <SelectContent>
                           {categories.map((cat) => (
                             <SelectItem key={cat} value={cat}>
-                              {cat}
+                              {t(`categoriesMap.${cat}`)}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -169,14 +174,14 @@ export default function AddExpensePage() {
                 <div className="space-y-2">
                   <Label htmlFor="cost" className="flex items-center gap-1.5 font-medium">
                     <CreditCard className="h-4 w-4 text-muted-foreground" />
-                    Сума витрати (₴)
+                    {t("addExpense.labelCost")}
                   </Label>
                   <div className="relative">
                     <Input
                       id="cost"
                       type="number"
                       step="0.01"
-                      placeholder="0.00"
+                      placeholder={t("addExpense.placeholderCost")}
                       className={`${errors.cost ? "border-destructive focus-visible:ring-destructive" : ""}`}
                       {...register("cost", { valueAsNumber: true })}
                     />
@@ -196,12 +201,12 @@ export default function AddExpensePage() {
                   {addMutation.isPending ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Внесення витрати...</span>
+                      <span>{t("addExpense.submittingButton")}</span>
                     </>
                   ) : (
                     <>
                       <PlusCircle className="h-4.5 w-4.5" />
-                      <span>Додати до журналу</span>
+                      <span>{t("addExpense.submitButton")}</span>
                     </>
                   )}
                 </Button>

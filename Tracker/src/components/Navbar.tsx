@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useTranslation } from "@/hooks/useTranslation";
 import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
@@ -24,6 +25,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { theme, setTheme, resolvedTheme } = useTheme();
+  const { t, language, setLanguage } = useTranslation();
   const [mounted, setMounted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const currentUser = useAuthStore((state) => state.currentUser);
@@ -36,14 +38,14 @@ export default function Navbar() {
 
   const handleLogout = () => {
     logout();
-    toast.info("Ви вийшли з профілю");
+    toast.info(language === "ua" ? "Ви вийшли з профілю" : "Logged out successfully");
     router.push("/login");
   };
 
   const navLinks = [
-    { href: "/", label: "Панель", icon: LayoutDashboard },
-    { href: "/add-expense", label: "Додати витрату", icon: PlusCircle },
-    { href: "/diagrams", label: "Діаграми", icon: PieChart },
+    { href: "/", label: t("navbar.dashboard"), icon: LayoutDashboard },
+    { href: "/add-expense", label: t("navbar.addExpense"), icon: PlusCircle },
+    { href: "/diagrams", label: t("navbar.analytics"), icon: PieChart },
   ];
 
   const activeClass = (href: string) => {
@@ -57,7 +59,10 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-2 font-bold text-xl tracking-tight text-primary transition-transform hover:scale-102">
+        <Link
+          href="/"
+          className="flex items-center gap-2 font-bold text-xl tracking-tight text-primary transition-transform hover:scale-102"
+        >
           <Wallet className="h-6 w-6 stroke-[2.5]" />
           <span>FamilyCash</span>
         </Link>
@@ -85,12 +90,23 @@ export default function Navbar() {
 
         {/* Actions */}
         <div className="hidden md:flex md:items-center md:gap-4">
+          {/* Language Switcher */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLanguage(language === "ua" ? "en" : "ua")}
+            className="font-bold text-xs uppercase px-2.5 py-1.5 h-8 rounded-lg hover:bg-accent hover:text-accent-foreground cursor-pointer"
+            aria-label="Switch language"
+          >
+            {language === "ua" ? "EN" : "UA"}
+          </Button>
+
           {/* Theme Toggle */}
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-            className="rounded-full transition-transform active:scale-95"
+            className="rounded-full transition-transform active:scale-95 cursor-pointer"
             aria-label="Toggle theme"
           >
             {mounted && resolvedTheme === "dark" ? (
@@ -115,28 +131,42 @@ export default function Navbar() {
                 variant="outline"
                 size="sm"
                 onClick={handleLogout}
-                className="flex items-center gap-2 border-destructive/20 hover:bg-destructive/10 hover:text-destructive text-muted-foreground"
+                className="flex items-center gap-2 border-destructive/20 hover:bg-destructive/10 hover:text-destructive text-muted-foreground cursor-pointer"
               >
                 <LogOut className="h-4 w-4" />
-                <span>Вийти</span>
+                <span>{t("navbar.logout")}</span>
               </Button>
             </div>
           ) : (
             pathname !== "/login" && (
               <Link href="/login">
-                <Button size="sm">Увійти</Button>
+                <Button size="sm" className="cursor-pointer">
+                  {language === "ua" ? "Увійти" : "Login"}
+                </Button>
               </Link>
             )
           )}
         </div>
 
-        {/* Mobile menu trigger */}
+        {/* Mobile Actions */}
         <div className="flex items-center gap-2 md:hidden">
+          {/* Language Switcher */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLanguage(language === "ua" ? "en" : "ua")}
+            className="font-bold text-xs uppercase px-2 h-9 rounded-lg hover:bg-accent hover:text-accent-foreground cursor-pointer"
+            aria-label="Switch language"
+          >
+            {language === "ua" ? "EN" : "UA"}
+          </Button>
+
+          {/* Theme Toggle */}
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-            className="rounded-full"
+            className="rounded-full cursor-pointer"
             aria-label="Toggle theme"
           >
             {mounted && resolvedTheme === "dark" ? (
@@ -151,6 +181,7 @@ export default function Navbar() {
               variant="ghost"
               size="icon"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="cursor-pointer"
               aria-label="Toggle mobile menu"
             >
               {mobileMenuOpen ? (
@@ -201,10 +232,10 @@ export default function Navbar() {
                 setMobileMenuOpen(false);
                 handleLogout();
               }}
-              className="flex items-center gap-2 border-destructive/20 text-destructive hover:bg-destructive/10"
+              className="flex items-center gap-2 border-destructive/20 text-destructive hover:bg-destructive/10 cursor-pointer"
             >
               <LogOut className="h-4 w-4" />
-              <span>Вийти</span>
+              <span>{t("navbar.logout")}</span>
             </Button>
           </div>
         </div>
