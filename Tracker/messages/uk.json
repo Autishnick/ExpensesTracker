@@ -1,0 +1,121 @@
+{
+  "navbar": {
+    "title": "Сімейний Бюджет",
+    "dashboard": "Панель",
+    "analytics": "Аналітика",
+    "addExpense": "Додати",
+    "logout": "Вихід"
+  },
+  "dashboard": {
+    "title": "Панель Витрат",
+    "subtitle": "Сімейний бюджет родини {username}",
+    "refreshTooltip": "Оновити дані",
+    "clearExpenses": "Очистити витрати",
+    "addExpenseButton": "Додати витрату",
+    "stats": {
+      "total": "Загальні Витрати",
+      "totalDesc": "Сума витрат усіх членів родини",
+      "topCategory": "Найбільша Категорія",
+      "topCategoryDesc": "Витрачено: {cost} ₴",
+      "topCategoryEmpty": "Немає записів",
+      "topSpender": "Головний Витратник",
+      "topSpenderDesc": "Всього витратив: {cost} ₴",
+      "topSpenderEmpty": "Немає записів",
+      "never": "Ніколи",
+      "nobody": "Ніхто"
+    },
+    "filters": {
+      "searchPlaceholder": "Пошук за членом родини чи категорією...",
+      "categoryAll": "Усі категорії",
+      "memberAll": "Усі члени",
+      "sortPlaceholder": "Сортування",
+      "sortNewest": "Спочатку нові",
+      "sortOldest": "Спочатку старі",
+      "sortExpensive": "Найдорожчі",
+      "sortCheapest": "Найдешевші"
+    },
+    "list": {
+      "title": "Список транзакцій",
+      "countDesc": "Показано {shown} записів з {total}",
+      "emptyTitle": "Жодних витрат не знайдено",
+      "emptyDescFirst": "Додайте свою першу витрату за сімейним бюджетом, щоб розпочати трекінг.",
+      "emptyDescFilter": "Спробуйте змінити фільтри пошуку.",
+      "emptyButton": "Додати першу витрату",
+      "confirmDelete": "Ви впевнені, що хочете видалити цю витрату?",
+      "confirmClear": "Увага! Всі витрати будуть безповоротно видалені. Продовжити?"
+    }
+  },
+  "analytics": {
+    "title": "Аналітика Витрат",
+    "subtitle": "Візуалізація сімейного бюджету родини {username}",
+    "clearButton": "Очистити витрати",
+    "noDataTitle": "Немає даних для діаграм",
+    "noDataDesc": "Будь ласка, додайте витрати на панелі приладів, щоб ми могли побудувати графіки та проаналізувати ваш бюджет.",
+    "noDataButton": "Додати першу витрату",
+    "balanceTitle": "Загальний баланс витрат",
+    "totalTransactions": "Усього транзакцій: {count}",
+    "categoryTitle": "Витрати по категоріях",
+    "categoryDesc": "Розподіл суми витрат за категоріями",
+    "memberTitle": "Витрати членів сім'ї",
+    "memberDesc": "Частка кожного члена сім'ї у загальних витратах",
+    "chartTooltipSpent": "Витрачено",
+    "chartTooltipSum": "Сума"
+  },
+  "addExpense": {
+    "title": "Додати Витрату",
+    "subtitle": "Введіть деталі нової витрати для сімейного бюджету",
+    "labelMember": "Член родини",
+    "placeholderMember": "Введіть ім'я...",
+    "labelCategory": "Категорія",
+    "placeholderCategory": "Оберіть категорію...",
+    "labelCost": "Вартість (₴)",
+    "placeholderCost": "0.00",
+    "submitButton": "Зберегти витрату",
+    "submittingButton": "Збереження...",
+    "backButton": "Назад до панелі",
+    "validation": {
+      "memberMin": "Введіть ім'я члена сім'ї (мінімум 2 символи)",
+      "memberMax": "Ім'я члена сім'ї занадто довге",
+      "categoryRequired": "Виберіть категорію",
+      "costRequired": "Введіть вартість",
+      "costNumber": "Введіть коректне число",
+      "costPositive": "Вартість повинна бути більшою за 0",
+      "costLimit": "Сума занадто велика"
+    }
+  },
+  "login": {
+    "title": "Вхід до системи",
+    "subtitle": "Увійдіть у кабінет вашої сім'ї",
+    "subtitleRegister": "Зареєструйте новий сімейний бюджет",
+    "labelUsername": "Назва сім'ї (Логін)",
+    "placeholderUsername": "напр. Іванови",
+    "labelPassword": "Пароль",
+    "placeholderPassword": "••••••••",
+    "buttonLogin": "Увійти",
+    "buttonLogging": "Вхід...",
+    "buttonRegister": "Зареєструватися",
+    "buttonRegistering": "Реєстрація...",
+    "confirmPassword": "Підтвердіть пароль",
+    "noAccount": "Ще немає облікового запису? ",
+    "hasAccount": "Вже зареєстровані? ",
+    "createAccount": "Створити зараз",
+    "loginAccount": "Увійти у профіль",
+    "pleaseWait": "Будь ласка, зачекайте...",
+    "cardDescriptionLogin": "Введіть назву родини та пароль для доступу",
+    "cardDescriptionRegister": "Створіть унікальне ім'я сім'ї та пароль",
+    "validation": {
+      "usernameMin": "Ім'я сім'ї має бути не менше 3 символів",
+      "usernameMax": "Ім'я користувача занадто довге",
+      "passwordMin": "Пароль має бути не менше 6 символів"
+    }
+  },
+  "categoriesMap": {
+    "🛒Products": "🛒Продукти",
+    "🚌Transport": "🚌Транспорт",
+    "⚽Entertainment": "⚽Розваги",
+    "👗Clothing and shoes": "👗Одяг та взуття",
+    "🏥Medicine": "🏥Медицина",
+    "📰Utilities and Internet": "📰Комунальні та інтернет",
+    "📨Other": "📨Інше"
+  }
+}

@@ -18,7 +18,7 @@ import {
   Cell,
 } from "recharts";
 import { BarChart2 } from "lucide-react";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslations } from "next-intl";
 
 interface CategoryDataPoint {
   name: string;
@@ -37,7 +37,7 @@ export default function CategoryBarChart({
   isDark,
   tooltipContentStyle,
 }: CategoryBarChartProps) {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   return (
     <Card className="border-border/80 bg-card/60 backdrop-blur-md shadow-xs">

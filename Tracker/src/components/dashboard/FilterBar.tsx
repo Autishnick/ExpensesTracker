@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Search, SlidersHorizontal } from "lucide-react";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslations } from "next-intl";
 
 interface FilterBarProps {
   searchQuery: string;
@@ -37,7 +37,7 @@ export default function FilterBar({
   categories,
   uniqueMembers,
 }: FilterBarProps) {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   return (
     <Card className="border-border/80 bg-card/40 backdrop-blur-md p-4">

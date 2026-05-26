@@ -6,8 +6,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useTranslation } from "@/hooks/useTranslation";
-import Navbar from "@/components/Navbar";
+import { useTranslations } from "next-intl";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,22 +21,13 @@ import {
 import { Loader2, ArrowLeft, PlusCircle, CreditCard, User, Tag } from "lucide-react";
 import Link from "next/link";
 import { useAddExpenseMutation } from "@/hooks/useExpenses";
-
-const categories = [
-  "🛒Products",
-  "🚌Transport",
-  "⚽Entertainment",
-  "👗Clothing and shoes",
-  "🏥Medicine",
-  "📰Utilities and Internet",
-  "📨Other",
-];
+import { CATEGORIES } from "@/lib/constants";
 
 export default function AddExpensePage() {
   const router = useRouter();
   const currentUser = useAuthStore((state) => state.currentUser);
   const isHydrated = useAuthStore((state) => state.isHydrated);
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   // Dynamic Zod Validation Schema inside the component to react to language changes
   const expenseSchema = useMemo(() => {
@@ -94,10 +84,8 @@ export default function AddExpensePage() {
   }
 
   return (
-    <>
-      <Navbar />
-      <main className="flex-1 bg-linear-to-b from-background to-accent/15 px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-lg space-y-6">
+    <main className="flex-1 bg-linear-to-b from-background to-accent/15 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-lg space-y-6">
           {/* Back button */}
           <Link
             href="/"
@@ -156,7 +144,7 @@ export default function AddExpensePage() {
                           <SelectValue placeholder={t("addExpense.placeholderCategory")} />
                         </SelectTrigger>
                         <SelectContent>
-                          {categories.map((cat) => (
+                          {CATEGORIES.map((cat) => (
                             <SelectItem key={cat} value={cat}>
                               {t(`categoriesMap.${cat}`)}
                             </SelectItem>
@@ -215,6 +203,5 @@ export default function AddExpensePage() {
           </Card>
         </div>
       </main>
-    </>
   );
 }

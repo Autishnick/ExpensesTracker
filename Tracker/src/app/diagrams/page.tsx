@@ -2,35 +2,22 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
-import Navbar from "@/components/Navbar";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, Trash2, ArrowRight, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useExpensesQuery, useClearExpensesMutation } from "@/hooks/useExpenses";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslations } from "next-intl";
 import CategoryBarChart from "@/components/analytics/CategoryBarChart";
 import MemberPieChart from "@/components/analytics/MemberPieChart";
-
-// Color Palette for charts
-const COLORS = [
-  "oklch(0.627 0.265 303.9)", // Violet
-  "oklch(0.609 0.126 221.72)", // Sky/Blue
-  "oklch(0.645 0.246 16.43)",  // Rose/Red
-  "oklch(0.769 0.188 70.08)",  // Amber/Orange
-  "oklch(0.627 0.194 149.58)", // Emerald
-  "oklch(0.707 0.165 254.62)", // Indigo
-  "oklch(0.609 0 0)",          // Gray
-];
-
-const EMOJI_REGEX = /[\p{Emoji}\u200d]+/gu;
+import { CHART_COLORS, parseCategory } from "@/lib/constants";
 
 export default function DiagramsPage() {
   const currentUser = useAuthStore((state) => state.currentUser);
   const isHydrated = useAuthStore((state) => state.isHydrated);
   const { resolvedTheme } = useTheme();
-  const { t, language } = useTranslation();
+  const t = useTranslations();
 
   // Recharts needs client-only render to avoid SSR hydration mismatches
   const [mounted, setMounted] = useState(false);
@@ -45,21 +32,12 @@ export default function DiagramsPage() {
   // Clear Mutation
   const clearMutation = useClearExpensesMutation();
 
-  // Hydration protection
-  if (!isHydrated || !currentUser) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
   // 1. Process category data (Memoized & Localized)
   const categoryData = useMemo(() => {
     const categoryExpenses = expenses.reduce((acc, expense) => {
       // Look up translation dictionary to translate category name before plotting
       const localizedCategory = t(`categoriesMap.${expense.category}`);
-      const categoryName = localizedCategory.replace(EMOJI_REGEX, "").trim();
+      const categoryName = parseCategory(localizedCategory).text;
       acc[categoryName] = (acc[categoryName] || 0) + expense.cost;
       return acc;
     }, {} as Record<string, number>);
@@ -67,7 +45,7 @@ export default function DiagramsPage() {
     return Object.keys(categoryExpenses).map((category, index) => ({
       name: category,
       value: categoryExpenses[category],
-      color: COLORS[index % COLORS.length],
+      color: CHART_COLORS[index % CHART_COLORS.length],
     }));
   }, [expenses, t]);
 
@@ -81,7 +59,7 @@ export default function DiagramsPage() {
     return Object.keys(memberExpenses).map((member, index) => ({
       name: member,
       value: memberExpenses[member],
-      color: COLORS[(index + 3) % COLORS.length],
+      color: CHART_COLORS[(index + 3) % CHART_COLORS.length],
     }));
   }, [expenses]);
 
@@ -89,12 +67,6 @@ export default function DiagramsPage() {
   const totalCost = useMemo(() => {
     return expenses.reduce((sum, item) => sum + item.cost, 0);
   }, [expenses]);
-
-  const handleClear = () => {
-    if (confirm(t("dashboard.list.confirmClear"))) {
-      clearMutation.mutate();
-    }
-  };
 
   const isDark = resolvedTheme === "dark";
 
@@ -108,11 +80,24 @@ export default function DiagramsPage() {
     };
   }, [isDark]);
 
+  // Hydration protection
+  if (!isHydrated || !currentUser) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const handleClear = () => {
+    if (confirm(t("dashboard.list.confirmClear"))) {
+      clearMutation.mutate();
+    }
+  };
+
   return (
-    <>
-      <Navbar />
-      <main className="flex-1 bg-linear-to-b from-background to-accent/15 px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl space-y-8">
+    <main className="flex-1 bg-linear-to-b from-background to-accent/15 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl space-y-8">
           {/* Header */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -197,6 +182,5 @@ export default function DiagramsPage() {
           )}
         </div>
       </main>
-    </>
   );
 }

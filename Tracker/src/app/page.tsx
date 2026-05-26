@@ -2,8 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useTranslation } from "@/hooks/useTranslation";
-import Navbar from "@/components/Navbar";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Plus, RefreshCw } from "lucide-react";
 import Link from "next/link";
@@ -15,21 +14,12 @@ import {
 import StatsCards from "@/components/dashboard/StatsCards";
 import FilterBar from "@/components/dashboard/FilterBar";
 import TransactionList from "@/components/dashboard/TransactionList";
-
-const categories = [
-  "🛒Products",
-  "🚌Transport",
-  "⚽Entertainment",
-  "👗Clothing and shoes",
-  "🏥Medicine",
-  "📰Utilities and Internet",
-  "📨Other",
-];
+import { CATEGORIES } from "@/lib/constants";
 
 export default function Dashboard() {
   const currentUser = useAuthStore((state) => state.currentUser);
   const isHydrated = useAuthStore((state) => state.isHydrated);
-  const { t, language } = useTranslation();
+  const t = useTranslations();
 
   // Filter & Search states
   const [searchQuery, setSearchQuery] = useState("");
@@ -52,14 +42,6 @@ export default function Dashboard() {
   const clearMutation = useClearExpensesMutation();
 
   // Hydration state check
-  if (!isHydrated || !currentUser) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <RefreshCw className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
   // Memoized unique members list for filters
   const uniqueMembers = useMemo(() => {
     return Array.from(new Set(expenses.map((e) => e.member))).filter(Boolean);
@@ -88,6 +70,15 @@ export default function Dashboard() {
       });
   }, [expenses, searchQuery, selectedCategory, selectedMember, sortBy]);
 
+  // Hydration state check
+  if (!isHydrated || !currentUser) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <RefreshCw className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   const handleDelete = (id: string) => {
     if (confirm(t("dashboard.list.confirmDelete"))) {
       deleteMutation.mutate(id);
@@ -101,10 +92,8 @@ export default function Dashboard() {
   };
 
   return (
-    <>
-      <Navbar />
-      <main className="flex-1 bg-linear-to-b from-background to-accent/10 px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl space-y-8">
+    <main className="flex-1 bg-linear-to-b from-background to-accent/10 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl space-y-8">
           {/* Header Section */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -159,7 +148,7 @@ export default function Dashboard() {
               setSelectedMember={setSelectedMember}
               sortBy={sortBy}
               setSortBy={setSortBy}
-              categories={categories}
+              categories={CATEGORIES}
               uniqueMembers={uniqueMembers}
             />
 
@@ -174,6 +163,5 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
-    </>
   );
 }

@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, ComponentType } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
@@ -21,11 +21,93 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+interface NavLinkProps {
+  href: string;
+  label: string;
+  icon: ComponentType<{ className?: string }>;
+  activeClass: (href: string) => string;
+  onClick?: () => void;
+  className?: string;
+  iconClassName?: string;
+}
+
+function NavLink({
+  href,
+  label,
+  icon: Icon,
+  activeClass,
+  onClick,
+  className = "",
+  iconClassName = "h-4 w-4",
+}: NavLinkProps) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={`flex items-center rounded-lg transition-colors ${activeClass(href)} ${className}`}
+    >
+      <Icon className={iconClassName} />
+      <span>{label}</span>
+    </Link>
+  );
+}
+
+interface LanguageSwitcherProps {
+  language: string;
+  className?: string;
+}
+
+function LanguageSwitcher({ language, className = "" }: LanguageSwitcherProps) {
+  const toggleLanguage = () => {
+    const nextLocale = language === "uk" ? "en" : "uk";
+    document.cookie = `NEXT_LOCALE=${nextLocale}; path=/; max-age=31536000`;
+    window.location.reload();
+  };
+
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={toggleLanguage}
+      className={`font-bold text-xs uppercase rounded-lg hover:bg-accent hover:text-accent-foreground cursor-pointer ${className}`}
+      aria-label="Switch language"
+    >
+      {language === "uk" ? "EN" : "UA"}
+    </Button>
+  );
+}
+
+interface ThemeToggleProps {
+  mounted: boolean;
+  resolvedTheme: string | undefined;
+  setTheme: (theme: string) => void;
+  className?: string;
+}
+
+function ThemeToggle({ mounted, resolvedTheme, setTheme, className = "" }: ThemeToggleProps) {
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+      className={`rounded-full cursor-pointer ${className}`}
+      aria-label="Toggle theme"
+    >
+      {mounted && resolvedTheme === "dark" ? (
+        <Sun className="h-5 w-5 text-yellow-500" />
+      ) : (
+        <Moon className="h-5 w-5 text-slate-700 dark:text-slate-300" />
+      )}
+    </Button>
+  );
+}
+
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { theme, setTheme, resolvedTheme } = useTheme();
-  const { t, language, setLanguage } = useTranslation();
+  const t = useTranslations();
+  const language = useLocale();
   const [mounted, setMounted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const currentUser = useAuthStore((state) => state.currentUser);
@@ -38,7 +120,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     logout();
-    toast.info(language === "ua" ? "Ви вийшли з профілю" : "Logged out successfully");
+    toast.info(language === "uk" ? "Ви вийшли з профілю" : "Logged out successfully");
     router.push("/login");
   };
 
@@ -70,51 +152,34 @@ export default function Navbar() {
         {/* Desktop Navigation */}
         {isHydrated && currentUser && (
           <nav className="hidden md:flex md:gap-2">
-            {navLinks.map((link) => {
-              const Icon = link.icon;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${activeClass(
-                    link.href
-                  )}`}
-                >
-                  <Icon className="h-4 w-4" />
-                  <span>{link.label}</span>
-                </Link>
-              );
-            })}
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.href}
+                href={link.href}
+                label={link.label}
+                icon={link.icon}
+                activeClass={activeClass}
+                className="gap-2 px-4 py-2 text-sm font-medium"
+              />
+            ))}
           </nav>
         )}
 
         {/* Actions */}
         <div className="hidden md:flex md:items-center md:gap-4">
           {/* Language Switcher */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setLanguage(language === "ua" ? "en" : "ua")}
-            className="font-bold text-xs uppercase px-2.5 py-1.5 h-8 rounded-lg hover:bg-accent hover:text-accent-foreground cursor-pointer"
-            aria-label="Switch language"
-          >
-            {language === "ua" ? "EN" : "UA"}
-          </Button>
+          <LanguageSwitcher
+            language={language}
+            className="px-2.5 py-1.5 h-8"
+          />
 
           {/* Theme Toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-            className="rounded-full transition-transform active:scale-95 cursor-pointer"
-            aria-label="Toggle theme"
-          >
-            {mounted && resolvedTheme === "dark" ? (
-              <Sun className="h-5 w-5 text-yellow-500" />
-            ) : (
-              <Moon className="h-5 w-5 text-slate-700 dark:text-slate-300" />
-            )}
-          </Button>
+          <ThemeToggle
+            mounted={mounted}
+            resolvedTheme={resolvedTheme}
+            setTheme={setTheme}
+            className="transition-transform active:scale-95"
+          />
 
           {/* User Section */}
           {isHydrated && currentUser ? (
@@ -141,7 +206,7 @@ export default function Navbar() {
             pathname !== "/login" && (
               <Link href="/login">
                 <Button size="sm" className="cursor-pointer">
-                  {language === "ua" ? "Увійти" : "Login"}
+                  {language === "uk" ? "Увійти" : "Login"}
                 </Button>
               </Link>
             )
@@ -151,30 +216,17 @@ export default function Navbar() {
         {/* Mobile Actions */}
         <div className="flex items-center gap-2 md:hidden">
           {/* Language Switcher */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setLanguage(language === "ua" ? "en" : "ua")}
-            className="font-bold text-xs uppercase px-2 h-9 rounded-lg hover:bg-accent hover:text-accent-foreground cursor-pointer"
-            aria-label="Switch language"
-          >
-            {language === "ua" ? "EN" : "UA"}
-          </Button>
+          <LanguageSwitcher
+            language={language}
+            className="px-2 h-9"
+          />
 
           {/* Theme Toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-            className="rounded-full cursor-pointer"
-            aria-label="Toggle theme"
-          >
-            {mounted && resolvedTheme === "dark" ? (
-              <Sun className="h-5 w-5 text-yellow-500" />
-            ) : (
-              <Moon className="h-5 w-5" />
-            )}
-          </Button>
+          <ThemeToggle
+            mounted={mounted}
+            resolvedTheme={resolvedTheme}
+            setTheme={setTheme}
+          />
 
           {isHydrated && currentUser && (
             <Button
@@ -198,22 +250,18 @@ export default function Navbar() {
       {mobileMenuOpen && isHydrated && currentUser && (
         <div className="md:hidden border-t border-border bg-background px-4 py-4 space-y-3 transition-all duration-300">
           <div className="space-y-1">
-            {navLinks.map((link) => {
-              const Icon = link.icon;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium transition-colors ${activeClass(
-                    link.href
-                  )}`}
-                >
-                  <Icon className="h-5 w-5" />
-                  <span>{link.label}</span>
-                </Link>
-              );
-            })}
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.href}
+                href={link.href}
+                label={link.label}
+                icon={link.icon}
+                activeClass={activeClass}
+                onClick={() => setMobileMenuOpen(false)}
+                className="gap-3 px-4 py-3 text-base font-medium"
+                iconClassName="h-5 w-5"
+              />
+            ))}
           </div>
 
           <div className="pt-4 border-t border-border flex items-center justify-between">

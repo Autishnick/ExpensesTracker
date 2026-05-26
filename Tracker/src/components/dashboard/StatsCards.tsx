@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, User as UserIcon, Tag } from "lucide-react";
 import { Expense } from "@/lib/api";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslations } from "next-intl";
 
 interface StatsCardsProps {
   expenses: Expense[];
@@ -12,7 +12,7 @@ interface StatsCardsProps {
 }
 
 export default function StatsCards({ expenses, isLoading }: StatsCardsProps) {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   // Memoized stats calculation
   const stats = useMemo(() => {

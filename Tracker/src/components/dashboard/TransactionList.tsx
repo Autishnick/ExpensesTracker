@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { AlertCircle, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { Expense } from "@/lib/api";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslations, useLocale } from "next-intl";
+import { parseCategory } from "@/lib/constants";
 
 interface TransactionListProps {
   expenses: Expense[];
@@ -15,8 +16,7 @@ interface TransactionListProps {
   isDeletePending: boolean;
 }
 
-// Pre-compiled regex for emoji matching/replacing for better performance
-const EMOJI_REGEX = /[\p{Emoji}\u200d]+/gu;
+
 
 // Single pre-compiled Date Formatters to avoid recreation on every render/item
 const dateFormatterUA = new Intl.DateTimeFormat("uk-UA", {
@@ -38,8 +38,9 @@ export default function TransactionList({
   onDelete,
   isDeletePending,
 }: TransactionListProps) {
-  const { t, language } = useTranslation();
-  const dateFormatter = language === "ua" ? dateFormatterUA : dateFormatterEN;
+  const t = useTranslations();
+  const language = useLocale();
+  const dateFormatter = language === "uk" ? dateFormatterUA : dateFormatterEN;
 
   return (
     <Card className="border-border/80 bg-card/60 backdrop-blur-md overflow-hidden shadow-xs">
@@ -95,9 +96,7 @@ export default function TransactionList({
           {filteredExpenses.map((expense) => {
             // Translate the category before splitting emojis
             const localizedCategory = t(`categoriesMap.${expense.category}`);
-            const emojis = localizedCategory.match(EMOJI_REGEX);
-            const categoryEmoji = emojis?.[0] || "💰";
-            const categoryText = localizedCategory.replace(EMOJI_REGEX, "").trim();
+            const { emoji: categoryEmoji, text: categoryText } = parseCategory(localizedCategory);
 
             return (
               <div

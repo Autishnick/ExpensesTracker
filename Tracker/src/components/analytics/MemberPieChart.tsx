@@ -15,7 +15,7 @@ import {
   Tooltip,
 } from "recharts";
 import { PieChart as PieIcon } from "lucide-react";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslations } from "next-intl";
 
 interface MemberDataPoint {
   name: string;
@@ -34,7 +34,7 @@ export default function MemberPieChart({
   totalCost,
   tooltipContentStyle,
 }: MemberPieChartProps) {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   return (
     <Card className="border-border/80 bg-card/60 backdrop-blur-md shadow-xs">

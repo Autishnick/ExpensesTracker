@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,33 +12,39 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Wallet, User as UserIcon, Lock, ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import Navbar from "@/components/Navbar";
-
-// Validation Schemas
-const loginSchema = z.object({
-  username: z.string().min(3, "Ім'я сім'ї має бути не менше 3 символів"),
-  password: z.string().min(6, "Пароль має бути не менше 6 символів"),
-});
-
-const registerSchema = loginSchema.extend({
-  confirmPassword: z.string().min(6, "Підтвердження паролю обов'язкове"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Паролі не співпадають",
-  path: ["confirmPassword"],
-});
-
-type LoginFields = z.infer<typeof loginSchema>;
-type RegisterFields = z.infer<typeof registerSchema>;
+import { useTranslations } from "next-intl";
 
 export default function LoginPage() {
   const router = useRouter();
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const t = useTranslations();
 
   const currentUser = useAuthStore((state) => state.currentUser);
   const login = useAuthStore((state) => state.login);
   const register = useAuthStore((state) => state.register);
   const isHydrated = useAuthStore((state) => state.isHydrated);
+
+  // Dynamic Zod Validation Schemas
+  const loginSchema = useMemo(() => {
+    return z.object({
+      username: z.string().min(3, t("login.validation.usernameMin")),
+      password: z.string().min(6, t("login.validation.passwordMin")),
+    });
+  }, [t]);
+
+  const registerSchema = useMemo(() => {
+    return loginSchema.extend({
+      confirmPassword: z.string().min(6, t("login.validation.passwordMin")),
+    }).refine((data) => data.password === data.confirmPassword, {
+      message: t("addExpense.validation.costLimit"),
+      path: ["confirmPassword"],
+    });
+  }, [loginSchema, t]);
+
+  type RegisterFields = z.infer<typeof loginSchema> & {
+    confirmPassword?: string;
+  };
 
   // Form Setup
   const {
@@ -97,127 +103,119 @@ export default function LoginPage() {
   }
 
   return (
-    <>
-      <Navbar />
-      <main className="flex flex-1 flex-col items-center justify-center px-4 py-12 bg-linear-to-b from-background to-accent/20">
-        <div className="mx-auto w-full max-w-md">
-          {/* Logo Heading */}
-          <div className="flex flex-col items-center gap-2 mb-8 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md shadow-primary/20">
-              <Wallet className="h-6 w-6 stroke-[2.2]" />
-            </div>
-            <h1 className="text-3xl font-extrabold tracking-tight">FamilyCash</h1>
-            <p className="text-sm text-muted-foreground">
-              {isLoginMode
-                ? "Увійдіть у кабінет вашої сім'ї"
-                : "Зареєструйте новий сімейний бюджет"}
-            </p>
+    <main className="flex flex-1 flex-col items-center justify-center px-4 py-12 bg-linear-to-b from-background to-accent/20">
+      <div className="mx-auto w-full max-w-md">
+        {/* Logo Heading */}
+        <div className="flex flex-col items-center gap-2 mb-8 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md shadow-primary/20">
+            <Wallet className="h-6 w-6 stroke-[2.2]" />
           </div>
+          <h1 className="text-3xl font-extrabold tracking-tight">FamilyCash</h1>
+          <p className="text-sm text-muted-foreground">
+            {isLoginMode ? t("login.subtitle") : t("login.subtitleRegister")}
+          </p>
+        </div>
 
-          <Card className="border border-border/80 bg-card/60 backdrop-blur-md shadow-xl transition-all duration-300">
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl font-bold tracking-tight text-center">
-                {isLoginMode ? "Вхід" : "Реєстрація"}
-              </CardTitle>
-              <CardDescription className="text-center">
-                {isLoginMode
-                  ? "Введіть назву родини та пароль для доступу"
-                  : "Створіть унікальне ім'я сім'ї та пароль"}
-              </CardDescription>
-            </CardHeader>
+        <Card className="border border-border/80 bg-card/60 backdrop-blur-md shadow-xl transition-all duration-300">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold tracking-tight text-center">
+              {isLoginMode ? t("login.buttonLogin") : t("login.buttonRegister")}
+            </CardTitle>
+            <CardDescription className="text-center">
+              {isLoginMode ? t("login.cardDescriptionLogin") : t("login.cardDescriptionRegister")}
+            </CardDescription>
+          </CardHeader>
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <CardContent className="space-y-4">
-                {/* Username */}
-                <div className="space-y-2">
-                  <Label htmlFor="username">Назва сім'ї (Логін)</Label>
-                  <div className="relative">
-                    <UserIcon className="absolute left-3 top-3 h-4.5 w-4.5 text-muted-foreground" />
-                    <Input
-                      id="username"
-                      type="text"
-                      placeholder="напр. Іванови"
-                      className={`pl-10 ${errors.username ? "border-destructive focus-visible:ring-destructive" : ""}`}
-                      {...registerField("username")}
-                    />
-                  </div>
-                  {errors.username && (
-                    <p className="text-xs font-medium text-destructive">{errors.username.message}</p>
-                  )}
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <CardContent className="space-y-4">
+              {/* Username */}
+              <div className="space-y-2">
+                <Label htmlFor="username">{t("login.labelUsername")}</Label>
+                <div className="relative">
+                  <UserIcon className="absolute left-3 top-3 h-4.5 w-4.5 text-muted-foreground" />
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder={t("login.placeholderUsername")}
+                    className={`pl-10 ${errors.username ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                    {...registerField("username")}
+                  />
                 </div>
+                {errors.username && (
+                  <p className="text-xs font-medium text-destructive">{errors.username.message}</p>
+                )}
+              </div>
 
-                {/* Password */}
+              {/* Password */}
+              <div className="space-y-2">
+                <Label htmlFor="password">{t("login.labelPassword")}</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4.5 w-4.5 text-muted-foreground" />
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder={t("login.placeholderPassword")}
+                    className={`pl-10 ${errors.password ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                    {...registerField("password")}
+                  />
+                </div>
+                {errors.password && (
+                  <p className="text-xs font-medium text-destructive">{errors.password.message}</p>
+                )}
+              </div>
+
+              {/* Confirm Password (only in Register Mode) */}
+              {!isLoginMode && (
                 <div className="space-y-2">
-                  <Label htmlFor="password">Пароль</Label>
+                  <Label htmlFor="confirmPassword">{t("login.confirmPassword")}</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4.5 w-4.5 text-muted-foreground" />
                     <Input
-                      id="password"
+                      id="confirmPassword"
                       type="password"
                       placeholder="••••••••"
-                      className={`pl-10 ${errors.password ? "border-destructive focus-visible:ring-destructive" : ""}`}
-                      {...registerField("password")}
+                      className={`pl-10 ${errors.confirmPassword ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                      {...registerField("confirmPassword")}
                     />
                   </div>
-                  {errors.password && (
-                    <p className="text-xs font-medium text-destructive">{errors.password.message}</p>
+                  {errors.confirmPassword && (
+                    <p className="text-xs font-medium text-destructive">
+                      {errors.confirmPassword.message}
+                    </p>
                   )}
                 </div>
+              )}
+            </CardContent>
 
-                {/* Confirm Password (only in Register Mode) */}
-                {!isLoginMode && (
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Підтвердіть пароль</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4.5 w-4.5 text-muted-foreground" />
-                      <Input
-                        id="confirmPassword"
-                        type="password"
-                        placeholder="••••••••"
-                        className={`pl-10 ${errors.confirmPassword ? "border-destructive focus-visible:ring-destructive" : ""
-                          }`}
-                        {...registerField("confirmPassword")}
-                      />
-                    </div>
-                    {errors.confirmPassword && (
-                      <p className="text-xs font-medium text-destructive">
-                        {errors.confirmPassword.message}
-                      </p>
-                    )}
-                  </div>
+            <CardFooter className="flex flex-col gap-4">
+              <Button type="submit" className="w-full flex gap-2 font-medium" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>{t("login.pleaseWait")}</span>
+                  </>
+                ) : (
+                  <>
+                    <span>{isLoginMode ? t("login.buttonLogin") : t("login.buttonRegister")}</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </>
                 )}
-              </CardContent>
+              </Button>
 
-              <CardFooter className="flex flex-col gap-4">
-                <Button type="submit" className="w-full flex gap-2 font-medium" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Будь ласка, зачекайте...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>{isLoginMode ? "Увійти" : "Зареєструватися"}</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </>
-                  )}
-                </Button>
-
-                <p className="text-sm text-center text-muted-foreground">
-                  {isLoginMode ? "Ще немає облікового запису? " : "Вже зареєстровані? "}
-                  <button
-                    type="button"
-                    onClick={toggleMode}
-                    className="font-medium text-primary hover:underline hover:text-primary/95 transition-colors cursor-pointer"
-                  >
-                    {isLoginMode ? "Створити зараз" : "Увійти у профіль"}
-                  </button>
-                </p>
-              </CardFooter>
-            </form>
-          </Card>
-        </div>
-      </main>
-    </>
+              <p className="text-sm text-center text-muted-foreground">
+                {isLoginMode ? t("login.noAccount") : t("login.hasAccount")}
+                <button
+                  type="button"
+                  onClick={toggleMode}
+                  className="font-medium text-primary hover:underline hover:text-primary/95 transition-colors cursor-pointer ml-1"
+                >
+                  {isLoginMode ? t("login.createAccount") : t("login.loginAccount")}
+                </button>
+              </p>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
+    </main>
   );
 }
