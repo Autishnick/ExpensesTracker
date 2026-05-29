@@ -12,6 +12,7 @@ import { useTranslations } from "next-intl";
 import CategoryBarChart from "@/components/analytics/CategoryBarChart";
 import MemberPieChart from "@/components/analytics/MemberPieChart";
 import { CHART_COLORS, parseCategory } from "@/lib/constants";
+import { toast } from "sonner";
 
 export default function DiagramsPage() {
   const currentUser = useAuthStore((state) => state.currentUser);
@@ -90,9 +91,13 @@ export default function DiagramsPage() {
   }
 
   const handleClear = () => {
-    if (confirm(t("dashboard.list.confirmClear"))) {
-      clearMutation.mutate();
-    }
+    toast.warning(t("dashboard.list.confirmClear"), {
+      action: {
+        label: t("dashboard.list.confirmClearAction"),
+        onClick: () => clearMutation.mutate(),
+      },
+      duration: 5000,
+    });
   };
 
   return (

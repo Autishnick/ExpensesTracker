@@ -64,6 +64,8 @@ export default function MemberPieChart({
               </Pie>
               <Tooltip
                 contentStyle={tooltipContentStyle}
+                itemStyle={{ color: tooltipContentStyle.color }}
+                labelStyle={{ color: tooltipContentStyle.color }}
                 formatter={(value: any) => [`${parseFloat(value).toFixed(2)} ₴`, t("analytics.chartTooltipSpent")]}
               />
             </PieChart>

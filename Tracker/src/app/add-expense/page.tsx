@@ -86,122 +86,121 @@ export default function AddExpensePage() {
   return (
     <main className="flex-1 bg-linear-to-b from-background to-accent/15 px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-lg space-y-6">
-          {/* Back button */}
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group cursor-pointer"
-          >
-            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            <span>{t("addExpense.backButton")}</span>
-          </Link>
+        {/* Back button */}
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group cursor-pointer"
+        >
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+          <span>{t("addExpense.backButton")}</span>
+        </Link>
 
-          <Card className="border border-border/80 bg-card/60 backdrop-blur-md shadow-xl transition-all duration-300">
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl font-bold tracking-tight text-center">
-                {t("addExpense.title")}
-              </CardTitle>
-              <CardDescription className="text-center">
-                {t("addExpense.subtitle")}
-              </CardDescription>
-            </CardHeader>
+        <Card className="border border-border/80 bg-card/60 backdrop-blur-md shadow-xl transition-all duration-300">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold tracking-tight text-center">
+              {t("addExpense.title")}
+            </CardTitle>
+            <CardDescription className="text-center">
+              {t("addExpense.subtitle")}
+            </CardDescription>
+          </CardHeader>
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <CardContent className="space-y-5">
-                {/* Family Member */}
-                <div className="space-y-2">
-                  <Label htmlFor="member" className="flex items-center gap-1.5 font-medium">
-                    <User className="h-4 w-4 text-muted-foreground" />
-                    {t("addExpense.labelMember")}
-                  </Label>
-                  <Input
-                    id="member"
-                    type="text"
-                    placeholder={t("addExpense.placeholderMember")}
-                    className={`${errors.member ? "border-destructive focus-visible:ring-destructive" : ""}`}
-                    {...register("member")}
-                  />
-                  {errors.member && (
-                    <p className="text-xs font-medium text-destructive">{errors.member.message}</p>
-                  )}
-                </div>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <CardContent className="space-y-5">
+              {/* Family Member */}
+              <div className="space-y-2">
+                <Label htmlFor="member" className="flex items-center gap-1.5 font-medium">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                  {t("addExpense.labelMember")}
+                </Label>
+                <Input
+                  id="member"
+                  type="text"
+                  placeholder={t("addExpense.placeholderMember")}
+                  className={`${errors.member ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                  {...register("member")}
+                />
+                {errors.member && (
+                  <p className="text-xs font-medium text-destructive">{errors.member.message}</p>
+                )}
+              </div>
 
-                {/* Category */}
-                <div className="space-y-2">
-                  <Label htmlFor="category" className="flex items-center gap-1.5 font-medium">
-                    <Tag className="h-4 w-4 text-muted-foreground" />
-                    {t("addExpense.labelCategory")}
-                  </Label>
-                  <Controller
-                    name="category"
-                    control={control}
-                    render={({ field }) => (
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger
-                          className={`w-full ${
-                            errors.category ? "border-destructive focus-visible:ring-destructive" : ""
+              {/* Category */}
+              <div className="space-y-2">
+                <Label htmlFor="category" className="flex items-center gap-1.5 font-medium">
+                  <Tag className="h-4 w-4 text-muted-foreground" />
+                  {t("addExpense.labelCategory")}
+                </Label>
+                <Controller
+                  name="category"
+                  control={control}
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger
+                        className={`w-full ${errors.category ? "border-destructive focus-visible:ring-destructive" : ""
                           }`}
-                        >
-                          <SelectValue placeholder={t("addExpense.placeholderCategory")} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {CATEGORIES.map((cat) => (
-                            <SelectItem key={cat} value={cat}>
-                              {t(`categoriesMap.${cat}`)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
+                      >
+                        <SelectValue placeholder={t("addExpense.placeholderCategory")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CATEGORIES.map((cat) => (
+                          <SelectItem key={cat} value={cat}>
+                            {t(`categoriesMap.${cat}`)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.category && (
+                  <p className="text-xs font-medium text-destructive">{errors.category.message}</p>
+                )}
+              </div>
+
+              {/* Cost */}
+              <div className="space-y-2 mb-4">
+                <Label htmlFor="cost" className="flex items-center gap-1.5 font-medium">
+                  <CreditCard className="h-4 w-4 text-muted-foreground" />
+                  {t("addExpense.labelCost")}
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="cost"
+                    type="number"
+                    step="0.1"
+                    placeholder={t("addExpense.placeholderCost")}
+                    className={`${errors.cost ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                    {...register("cost", { valueAsNumber: true })}
                   />
-                  {errors.category && (
-                    <p className="text-xs font-medium text-destructive">{errors.category.message}</p>
-                  )}
                 </div>
+                {errors.cost && (
+                  <p className="text-xs font-medium text-destructive">{errors.cost.message}</p>
+                )}
+              </div>
+            </CardContent>
 
-                {/* Cost */}
-                <div className="space-y-2">
-                  <Label htmlFor="cost" className="flex items-center gap-1.5 font-medium">
-                    <CreditCard className="h-4 w-4 text-muted-foreground" />
-                    {t("addExpense.labelCost")}
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="cost"
-                      type="number"
-                      step="0.01"
-                      placeholder={t("addExpense.placeholderCost")}
-                      className={`${errors.cost ? "border-destructive focus-visible:ring-destructive" : ""}`}
-                      {...register("cost", { valueAsNumber: true })}
-                    />
-                  </div>
-                  {errors.cost && (
-                    <p className="text-xs font-medium text-destructive">{errors.cost.message}</p>
-                  )}
-                </div>
-              </CardContent>
-
-              <CardFooter className="flex flex-col gap-4">
-                <Button
-                  type="submit"
-                  disabled={addMutation.isPending}
-                  className="w-full flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  {addMutation.isPending ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>{t("addExpense.submittingButton")}</span>
-                    </>
-                  ) : (
-                    <>
-                      <PlusCircle className="h-4.5 w-4.5" />
-                      <span>{t("addExpense.submitButton")}</span>
-                    </>
-                  )}
-                </Button>
-              </CardFooter>
-            </form>
-          </Card>
-        </div>
-      </main>
+            <CardFooter className="flex flex-col gap-4">
+              <Button
+                type="submit"
+                disabled={addMutation.isPending}
+                className="w-full flex items-center justify-center gap-2 cursor-pointer"
+              >
+                {addMutation.isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>{t("addExpense.submittingButton")}</span>
+                  </>
+                ) : (
+                  <>
+                    <PlusCircle className="h-4.5 w-4.5" />
+                    <span>{t("addExpense.submitButton")}</span>
+                  </>
+                )}
+              </Button>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
+    </main>
   );
 }

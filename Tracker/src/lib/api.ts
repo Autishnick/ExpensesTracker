@@ -10,6 +10,7 @@ export interface Expense {
 export interface User {
   id: string;
   username: string;
+  avatar?: string;
 }
 
 // Helper delay function to simulate network requests

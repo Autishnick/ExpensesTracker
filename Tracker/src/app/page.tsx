@@ -15,6 +15,7 @@ import StatsCards from "@/components/dashboard/StatsCards";
 import FilterBar from "@/components/dashboard/FilterBar";
 import TransactionList from "@/components/dashboard/TransactionList";
 import { CATEGORIES } from "@/lib/constants";
+import { toast } from "sonner";
 
 export default function Dashboard() {
   const currentUser = useAuthStore((state) => state.currentUser);
@@ -80,15 +81,23 @@ export default function Dashboard() {
   }
 
   const handleDelete = (id: string) => {
-    if (confirm(t("dashboard.list.confirmDelete"))) {
-      deleteMutation.mutate(id);
-    }
+    toast.warning(t("dashboard.list.confirmDelete"), {
+      action: {
+        label: t("dashboard.list.confirmDeleteAction"),
+        onClick: () => deleteMutation.mutate(id),
+      },
+      duration: 5000,
+    });
   };
 
   const handleClearAll = () => {
-    if (confirm(t("dashboard.list.confirmClear"))) {
-      clearMutation.mutate();
-    }
+    toast.warning(t("dashboard.list.confirmClear"), {
+      action: {
+        label: t("dashboard.list.confirmClearAction"),
+        onClick: () => clearMutation.mutate(),
+      },
+      duration: 5000,
+    });
   };
 
   return (

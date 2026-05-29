@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💸 FamilyCash — Family Expense Tracker
 
-## Getting Started
+**FamilyCash** is a modern, fast, and interactive family budgeting and expense tracking web application. The app has been designed with a focus on premium user experience, deep family profile customization, and clear visual analytics.
 
-First, run the development server:
+---
+
+## 🌟 Key Features
+
+### 🎨 Premium Design & Interface
+- **Violet-Indigo Theme**: Sleek, modern design built using the premium OKLCH color space (violet and indigo tones).
+- **Dark & Light Modes**: Seamless dark and light mode support with smooth transitions.
+- **Micro-Animations & Hover Effects**: Responsive interactive elements, scale animations on click/active states, and a clean interface without jarring animations.
+
+### 🏠 Family Profile Customization
+- **Profile Personalization**: Customize your family nickname and select a profile icon from a curated list of emojis.
+- **Member Contribution Breakdown**: Visual cards and progress bars displaying the financial and transaction contribution of each family member.
+- **Real-Time Overview Stats**: Displays total family spending, transaction count, and average item cost on the profile page.
+
+### 📊 Analytics & Interactive Charts
+- **Dynamic Charts**: Interactive Category Bar Charts (`CategoryBarChart`) and Member Pie Charts (`MemberPieChart`) powered by Recharts.
+- **Adaptive Tooltips**: Tooltip texts and values automatically adjust to remain fully legible in both light and dark modes.
+
+### ⚡ Transaction Management
+- **Quick Expense Log**: Add new expenses with customizable family members, categories, price tag, and automated timestamps.
+- **Search & Filtering**: A smart `FilterBar` supporting real-time search, category filtering, member filtering, and advanced sorting (newest, oldest, most expensive).
+- **Interactive Toasts**: Native browser `confirm()` modals have been replaced with elegant `sonner` warning toasts with embedded "Delete" and "Clear" actions.
+
+### 🌐 Multi-Language Support
+- Full localization for **Ukrainian (UA)** and **English (EN)** using `next-intl`.
+- Dynamic, real-time language switching directly in the navigation bar.
+
+### 🔒 Authorization & Data Persistence
+- Secure client-side login and registration with mock latency for visual feedback.
+- Private routes (e.g. `/`, `/add-expense`, `/profile`, `/diagrams`) are protected using session-based cookies via Next.js Middleware.
+- Data persistence: Expenses and user records are stored directly inside the browser's `localStorage` using Zustand's Persist Middleware.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **Styling**: Tailwind CSS, Vanilla CSS
+- **State Management**: Zustand (with local storage persistence middleware)
+- **Queries & Caching**: TanStack React Query
+- **UI Components & Icons**: Radix UI, Lucide Icons, Framer Motion (via shadcn)
+- **Visual Charts**: Recharts
+- **Notifications**: Sonner Toasts
+- **Localization**: Next-Intl
+
+---
+
+## 📂 Project Structure
+
+Key files and folders:
+- 📂 `messages/` — JSON translation dictionaries (`uk.json`, `en.json`)
+- 📂 `src/app/` — Application pages:
+  - 🏠 `/` (Dashboard / Main transaction view)
+  - 🔑 `/login` (Sign in & Registration screen)
+  - 👤 `/profile` (Family profile configurations)
+  - 📊 `/diagrams` (Interactive analytics charts)
+  - ➕ `/add-expense` (New transaction form)
+- 📂 `src/components/` — Shared modular UI components, Navbar, and profile subcomponents
+- 📂 `src/hooks/` — React Query custom hooks for data fetching (`useExpenses.ts`)
+- 📂 `src/store/` — Zustand store for user sessions and credentials (`useAuthStore.ts`)
+- 📂 `src/lib/` — API clients, helper utilities, and constants (`api.ts`, `constants.ts`)
+- 📄 `src/proxy.ts` — Edge middleware protecting private paths using session cookies
+
+---
+
+## 🚀 Getting Started
+
+### 1. Install Dependencies
+Make sure you have Node.js installed. Clone the repository, open it, and run the following command to download all dependencies:
+
+```bash
+npm install
+```
+
+### 2. Run the Development Server
+Launch the local dev environment:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the running application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Production Build
+To run TypeScript compiler checks and generate an optimized static build:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+```
 
-## Learn More
+To run the compiled production bundle locally:
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run start
+```
