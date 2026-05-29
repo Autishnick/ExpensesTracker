@@ -44,7 +44,7 @@ export default function FilterBar({
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
         {/* Search */}
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-3 h-4.5 w-4.5 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-muted-foreground" />
           <Input
             placeholder={t("dashboard.filters.searchPlaceholder")}
             value={searchQuery}
