@@ -6,7 +6,7 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const protectedPaths = ["/", "/add-expense", "/diagrams"];
-  
+
   // Check if current path matches any protected paths
   const isProtected = protectedPaths.some(
     (path) => pathname === path || pathname.startsWith(path + "/")
