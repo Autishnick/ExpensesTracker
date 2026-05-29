@@ -14,6 +14,7 @@ interface AuthState {
   login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
   register: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
+  updateProfile: (username: string, avatar: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 // Client-side cookie helpers
@@ -57,7 +58,11 @@ export const useAuthStore = create<AuthState>()(
           return { success: false, error: "Неправильний пароль" };
         }
 
-        const user: User = { id: foundUser.id, username: foundUser.username };
+        const user: User = { 
+          id: foundUser.id, 
+          username: foundUser.username, 
+          avatar: foundUser.avatar || "🏠" 
+        };
         set({ currentUser: user });
         setSessionCookie(user.username);
         return { success: true };
@@ -79,10 +84,15 @@ export const useAuthStore = create<AuthState>()(
           id: Math.random().toString(36).substring(2, 9),
           username,
           password,
+          avatar: "🏠", // Default avatar on registration
         };
 
         const updatedUsers = [...users, newUser];
-        const user: User = { id: newUser.id, username: newUser.username };
+        const user: User = { 
+          id: newUser.id, 
+          username: newUser.username, 
+          avatar: newUser.avatar 
+        };
 
         set({ users: updatedUsers, currentUser: user });
         setSessionCookie(user.username);
@@ -92,6 +102,43 @@ export const useAuthStore = create<AuthState>()(
       logout: () => {
         set({ currentUser: null });
         deleteSessionCookie();
+      },
+      updateProfile: async (username, avatar) => {
+        await new Promise((resolve) => setTimeout(resolve, 600));
+
+        const { users, currentUser } = get();
+        if (!currentUser) {
+          return { success: false, error: "Користувач не авторизований" };
+        }
+
+        if (username.trim().length < 3) {
+          return { success: false, error: "Назва сім'ї має бути не менше 3 символів" };
+        }
+
+        const isTaken = users.some(
+          (u) => u.id !== currentUser.id && u.username.toLowerCase() === username.toLowerCase()
+        );
+        if (isTaken) {
+          return { success: false, error: "Користувач з таким ім'ям вже існує" };
+        }
+
+        const updatedUsers = users.map((u) => {
+          if (u.id === currentUser.id) {
+            return { ...u, username, avatar };
+          }
+          return u;
+        });
+
+        const updatedCurrentUser: User = {
+          ...currentUser,
+          username,
+          avatar,
+        };
+
+        set({ users: updatedUsers, currentUser: updatedCurrentUser });
+        setSessionCookie(username);
+
+        return { success: true };
       },
     }),
     {

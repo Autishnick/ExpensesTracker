@@ -184,14 +184,27 @@ export default function Navbar() {
           {/* User Section */}
           {isHydrated && currentUser ? (
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 rounded-full bg-accent/60 pl-3 pr-4 py-1.5 border border-border">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <UserIcon className="h-3.5 w-3.5" />
+              <Link
+                href="/profile"
+                className={`flex items-center gap-2 rounded-full pl-3 pr-4 py-1.5 border transition-all duration-200 hover:scale-105 active:scale-98 shadow-xs cursor-pointer ${
+                  pathname === "/profile"
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-accent/60 hover:bg-accent/95 border-border hover:border-primary/20"
+                }`}
+              >
+                <div className={`flex h-6 w-6 items-center justify-center rounded-full transition-colors overflow-hidden ${
+                  pathname === "/profile" ? "bg-primary-foreground text-primary text-xs" : "bg-primary/10 text-primary text-xs"
+                }`}>
+                  {currentUser.avatar ? (
+                    <span className="text-xs leading-none select-none">{currentUser.avatar}</span>
+                  ) : (
+                    <UserIcon className="h-3.5 w-3.5" />
+                  )}
                 </div>
                 <span className="text-sm font-medium max-w-[120px] truncate">
                   {currentUser.username}
                 </span>
-              </div>
+              </Link>
               <Button
                 variant="outline"
                 size="sm"
@@ -265,14 +278,28 @@ export default function Navbar() {
           </div>
 
           <div className="pt-4 border-t border-border flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <UserIcon className="h-4 w-4" />
+            <Link
+              href="/profile"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-2 rounded-full pl-3 pr-4 py-1.5 border transition-all duration-200 cursor-pointer ${
+                pathname === "/profile"
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-accent/60 border-border"
+              }`}
+            >
+              <div className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors overflow-hidden ${
+                pathname === "/profile" ? "bg-primary-foreground text-primary text-sm" : "bg-primary/10 text-primary text-sm"
+              }`}>
+                {currentUser.avatar ? (
+                  <span className="text-sm leading-none select-none">{currentUser.avatar}</span>
+                ) : (
+                  <UserIcon className="h-4 w-4" />
+                )}
               </div>
               <span className="text-sm font-semibold truncate max-w-[150px]">
                 {currentUser.username}
               </span>
-            </div>
+            </Link>
             <Button
               variant="outline"
               size="sm"
