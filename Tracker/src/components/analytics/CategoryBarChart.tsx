@@ -73,7 +73,9 @@ export default function CategoryBarChart({
             />
             <Tooltip
               contentStyle={tooltipContentStyle}
-              cursor={{ fill: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)" }}
+              itemStyle={{ color: tooltipContentStyle.color }}
+              labelStyle={{ color: tooltipContentStyle.color }}
+              cursor={{ fill: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.03)" }}
               formatter={(value: any) => [`${parseFloat(value).toFixed(2)} ₴`, t("analytics.chartTooltipSum")]}
             />
             <Bar dataKey="value" radius={[6, 6, 0, 0]}>

@@ -132,7 +132,7 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <Label htmlFor="username">{t("login.labelUsername")}</Label>
                 <div className="relative">
-                  <UserIcon className="absolute left-3 top-3 h-4.5 w-4.5 text-muted-foreground" />
+                  <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-muted-foreground" />
                   <Input
                     id="username"
                     type="text"
@@ -147,10 +147,10 @@ export default function LoginPage() {
               </div>
 
               {/* Password */}
-              <div className="space-y-2">
+              <div className="space-y-2 pb-2">
                 <Label htmlFor="password">{t("login.labelPassword")}</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4.5 w-4.5 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-muted-foreground" />
                   <Input
                     id="password"
                     type="password"
@@ -166,10 +166,10 @@ export default function LoginPage() {
 
               {/* Confirm Password (only in Register Mode) */}
               {!isLoginMode && (
-                <div className="space-y-2">
+                <div className="space-y-2 pb-2">
                   <Label htmlFor="confirmPassword">{t("login.confirmPassword")}</Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4.5 w-4.5 text-muted-foreground" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-muted-foreground" />
                     <Input
                       id="confirmPassword"
                       type="password"
