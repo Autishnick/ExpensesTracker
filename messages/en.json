@@ -108,7 +108,8 @@
     "validation": {
       "usernameMin": "Family name must be at least 3 characters",
       "usernameMax": "Username is too long",
-      "passwordMin": "Password must be at least 6 characters"
+      "passwordMin": "Password must be at least 6 characters",
+      "passwordMismatch": "Passwords do not match"
     }
   },
   "categoriesMap": {
