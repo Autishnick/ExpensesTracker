@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,6 +25,13 @@ export default function LoginPage() {
   const register = useAuthStore((state) => state.register);
   const isHydrated = useAuthStore((state) => state.isHydrated);
 
+  // Redirect authenticated users to dashboard
+  useEffect(() => {
+    if (isHydrated && currentUser) {
+      router.push("/");
+    }
+  }, [isHydrated, currentUser, router]);
+
   // Dynamic Zod Validation Schemas
   const loginSchema = useMemo(() => {
     return z.object({
@@ -37,7 +44,7 @@ export default function LoginPage() {
     return loginSchema.extend({
       confirmPassword: z.string().min(6, t("login.validation.passwordMin")),
     }).refine((data) => data.password === data.confirmPassword, {
-      message: t("addExpense.validation.costLimit"),
+      message: t("login.validation.passwordMismatch"),
       path: ["confirmPassword"],
     });
   }, [loginSchema, t]);
