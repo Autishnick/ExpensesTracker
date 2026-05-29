@@ -30,3 +30,8 @@ export function parseCategory(localizedCategory: string): { emoji: string; text:
   const text = localizedCategory.replace(EMOJI_REGEX, "").trim();
   return { emoji, text };
 }
+export const EMOJIS = [
+  "🏠", "👨‍👩‍👧‍👦", "🐱", "🐶", "🦊", "🐻", "🦁", "🦄",
+  "🌈", "💼", "🍕", "🎯", "🚀", "💡", "💰", "💎",
+  "🎨", "🚗"
+];
