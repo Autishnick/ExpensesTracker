@@ -42,7 +42,9 @@
       "emptyDescFilter": "Спробуйте змінити фільтри пошуку.",
       "emptyButton": "Додати першу витрату",
       "confirmDelete": "Ви впевнені, що хочете видалити цю витрату?",
-      "confirmClear": "Увага! Всі витрати будуть безповоротно видалені. Продовжити?"
+      "confirmDeleteAction": "Видалити",
+      "confirmClear": "Увага! Всі витрати будуть безповоротно видалені. Продовжити?",
+      "confirmClearAction": "Очистити все"
     }
   },
   "analytics": {
@@ -117,5 +119,33 @@
     "🏥Medicine": "🏥Медицина",
     "📰Utilities and Internet": "📰Комунальні та інтернет",
     "📨Other": "📨Інше"
+  },
+  "profile": {
+    "title": "Профіль Сім'ї",
+    "subtitle": "Огляд вашого сімейного облікового запису та витрат",
+    "loginLabel": "Назва сімейного кабінету",
+    "totalSpent": "Сумарні сімейні витрати",
+    "transactions": "Всього транзакцій",
+    "avgTransaction": "Середній чек",
+    "membersTitle": "Внесок членів родини",
+    "membersSubtitle": "Розподіл витрат за кожним членом сім'ї",
+    "memberHeader": "Член сім'ї",
+    "spentHeader": "Витрачено",
+    "transactionsHeader": "Кількість",
+    "shareHeader": "Частка в бюджеті",
+    "otherFamiliesTitle": "Зареєстровані сімейні кабінети",
+    "otherFamiliesSubtitle": "Перейдіть до іншого кабінету або зареєструйте новий",
+    "otherFamiliesDesc": "Всі зареєстровані сімейні профілі в системі",
+    "activeAccount": "Активний профіль",
+    "backToDashboard": "Назад до панелі",
+    "registeredAt": "Зареєстровано",
+    "noExpenses": "Витрати ще не додано",
+    "editTitle": "Налаштування профілю",
+    "editSubtitle": "Змініть назву сім'ї та виберіть емодзі для аватара",
+    "labelNewName": "Назва сім'ї",
+    "labelAvatar": "Виберіть іконку аватара",
+    "saveButton": "Зберегти зміни",
+    "savingButton": "Збереження...",
+    "successMessage": "Профіль успішно оновлено!"
   }
 }
